@@ -4,16 +4,17 @@
 
 ## Table of Contents 
 
-
 - [Deployment](#deployment)
 - [Technologies](#technologies)
 - [Features](#features)
 - [Credits](#credits)
 - [License](#license)
 
+![Gif of page](/assets/images/newportfoliogif.gif)
+
 ## Deployment
 
-Application deployed via the live GitHub URL: TBD.
+Application deployed via : TBD.
 
 ## Technologies
 
@@ -25,17 +26,31 @@ Application deployed via the live GitHub URL: TBD.
 * HTTP Requests
 * Play Framework
 
-![Gif of page](/assets/images/newportfoliogif.gif)
+
 
 ## Features
 
-* TBD
+TBD
 
 
 ## Credits
 
-Original code created by Davou Jobbi.
+Based on the "Building-A-RESTful-API-With-Scala-Play" tutorial proided by Mercator Digital.
 
+## Languages
+
+![badmath](https://img.shields.io/badge/Scala-TBD-purple)
+![badmath](https://img.shields.io/badge/HTML-TBD-blue)
+![badmath](https://img.shields.io/badge/CSS-TBD-orange)
+
+
+## How to Contribute
+
+No contributions.
+
+## Tests
+
+TBD
 
 ## License
 
@@ -63,19 +78,5 @@ SOFTWARE.
 
 ---
 
-## Languages 
-
-![badmath](https://img.shields.io/badge/Scala-TBD-purple)
-![badmath](https://img.shields.io/badge/HTML-TBD-blue)
-![badmath](https://img.shields.io/badge/CSS-TBD-orange)
-
-
-## How to Contribute
-
-No contributions.
-
-## Tests
-
-TBD
 
 
