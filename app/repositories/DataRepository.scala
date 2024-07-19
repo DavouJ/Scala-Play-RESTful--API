@@ -26,7 +26,7 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
   indexes = Seq(IndexModel(Indexes.ascending("_id"))),
   replaceIndexes = false
 ) {
-  def index(): Future[Either[Int, Seq[DataModel]]] =    //search the database for collection
+  def index(): Future[Either[Int, Seq[DataModel]]] =    //list of all the dataModels in the database
     collection.find().toFuture().map {
       case books: Seq[DataModel] => Right(books)
       case _ => Left(404)
@@ -39,10 +39,11 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
       Filters.equal("_id", id)
     )
 
-  def read(id: String): Future[DataModel] =
+  def read(id: String): Future[Either[Int, DataModel]] =
     collection.find(byID(id)).headOption flatMap {
       case Some(data) =>
-        Future(data)
+        Future(Right(data))
+      case _ => Future(Left(404))
     }
 
   def update(id: String, book: DataModel): Future[result.UpdateResult] =

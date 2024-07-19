@@ -2,7 +2,7 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-class DataModel(_id: String,
+case class DataModel(_id: String,
                 name: String,
                 description: String,
                 pageCount: Int) {
