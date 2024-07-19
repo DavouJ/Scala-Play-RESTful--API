@@ -1,7 +1,7 @@
 package controllers
 
 import com.google.inject.Singleton
-import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Request, Result}
 import scala.concurrent.Future
 import javax.inject.Inject
 
@@ -14,7 +14,9 @@ class ApplicationController @Inject()(val controllerComponents: ControllerCompon
 //    Future.successful(Ok(views.html.index()))
 //  }
 
-  def index() = TODO
+  def index() = Action {
+    Ok("yo").withHeaders(ETAG -> "0")
+  }
 
   def create() = TODO
 
