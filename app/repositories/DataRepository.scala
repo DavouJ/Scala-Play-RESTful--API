@@ -5,6 +5,8 @@ import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.empty
 import org.mongodb.scala.model._
 import org.mongodb.scala.result
+import org.mongodb.scala.result.DeleteResult
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
@@ -29,9 +31,10 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
   def index(): Future[Either[Int, Seq[DataModel]]] =    //list of all the dataModels in the database
     collection.find().toFuture().map {
       case books: Seq[DataModel] => Right(books)
-      case _ => Left(404)
+      case _ => Left(NOT_FOUND)
     }
-  def create()(book: DataModel): Future[DataModel] =
+
+  def create(book: DataModel): Future[DataModel] =
     collection.insertOne(book).toFuture().map(_ => book)
 
   private def byID(id: String): Bson =
@@ -39,11 +42,11 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
       Filters.equal("_id", id)
     )
 
-  def read(id: String): Future[Either[Int, DataModel]] =
+
+  def read(id: String): Future[DataModel] =
     collection.find(byID(id)).headOption flatMap {
       case Some(data) =>
-        Future(Right(data))
-      case _ => Future(Left(404))
+        Future(data)
     }
 
   def update(id: String, book: DataModel): Future[result.UpdateResult] =
@@ -52,9 +55,17 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
       replacement = book,
       options = new ReplaceOptions().upsert(true)).toFuture() /// LOOK into
 
-  def delete(id:String): Future[result.DeleteResult] =
+  def delete(id: String): Future[result.DeleteResult] =
     collection.deleteOne(
-      filter = byID(id)).toFuture()
+      filter = byID(id)
+    ).toFuture()
+
+  //  def delete(id: String): Future[Either[Int,result.DeleteResult]] =
+//    collection.deleteOne(filter = byID(id)).headOption flatMap {
+//      case Some(data) => Future(Right(data))
+//      case _ => Future(Left(NOT_FOUND))
+//    }
+//  //.toFuture()
 
   def deleteAll(): Future[Unit] = collection.deleteMany(empty()).toFuture().map(_ => ())
 
