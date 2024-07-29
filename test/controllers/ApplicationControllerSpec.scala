@@ -3,7 +3,7 @@ package controllers
 
 import akka.util.ByteString
 import baseSpec.BaseSpecWithApplication
-import models.DataModel
+import models.{DataModel, VolumeInfo}
 import play.api.test.FakeRequest
 import play.api.http.Status
 import play.api.libs.json.{JsSuccess, JsValue, Json}
@@ -12,26 +12,28 @@ import play.api.mvc.Results._
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents, Result}
 import play.api.test.Helpers.{contentAsJson, _}
 import repositories.DataRepository
+import services.LibraryService
 import uk.gov.hmrc.mongo.MongoComponent
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ApplicationControllerSpec @Inject()(dataRepository: DataRepository)(val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseSpecWithApplication {
+class ApplicationControllerSpec @Inject()(dataRepository: DataRepository)(val controllerComponents: ControllerComponents)(libraryService: LibraryService)(implicit ec: ExecutionContext) extends BaseSpecWithApplication {
 
-  val TestApplicationController = new ApplicationController(dataRepository)(controllerComponents)
+  val TestApplicationController = new ApplicationController(dataRepository)(controllerComponents)(libraryService)
 
+  private val volumeInfo: VolumeInfo = VolumeInfo(
+    "test name",
+    Some("test description"),
+    100
+  )
   private val dataModel: DataModel = DataModel(
     "abcd",
-    "test name",
-    "test description",
-    100
+    volumeInfo
   )
   private val badDataModel: DataModel = DataModel(
     "abcd",
-    "test name",
-    "test description",
-    100
+    volumeInfo
   )
 
   "ApplicationController.index()" should {
@@ -43,7 +45,6 @@ class ApplicationControllerSpec @Inject()(dataRepository: DataRepository)(val co
       status(result) shouldBe Status.OK
       afterEach()
     }
-
   }
 
   "AplicationController.create()" should {
@@ -62,7 +63,7 @@ class ApplicationControllerSpec @Inject()(dataRepository: DataRepository)(val co
 
     "Find a book in the database by id" in {
       beforeEach()
-      val request: FakeRequest[JsValue] = buildPost(s"/api/${dataModel._id}").withBody[JsValue](Json.toJson(dataModel))
+      val request: FakeRequest[JsValue] = buildPost(s"/api/${dataModel.id}").withBody[JsValue](Json.toJson(dataModel))
       val createdResult: Future[Result] = TestApplicationController.create()(request)
 
       status(createdResult) shouldBe Status.CREATED
@@ -82,7 +83,7 @@ class ApplicationControllerSpec @Inject()(dataRepository: DataRepository)(val co
   "AplicationController.update(id: String)" should {
     "Update a book's details by id" in {
       beforeEach()
-      val request: FakeRequest[JsValue] = buildPost(s"/api/${dataModel._id}").withBody[JsValue](Json.toJson(dataModel))
+      val request: FakeRequest[JsValue] = buildPost(s"/api/${dataModel.id}").withBody[JsValue](Json.toJson(dataModel))
       val createdResult: Future[Result] = TestApplicationController.create()(request)
 
       status(createdResult) shouldBe Status.CREATED
@@ -102,7 +103,7 @@ class ApplicationControllerSpec @Inject()(dataRepository: DataRepository)(val co
 
     "remove a book from the collection by id" in{
       beforeEach()
-      val request: FakeRequest[JsValue] = buildPost(s"/api/${dataModel._id}").withBody[JsValue](Json.toJson(dataModel))
+      val request: FakeRequest[JsValue] = buildPost(s"/api/${dataModel.id}").withBody[JsValue](Json.toJson(dataModel))
       val createdResult: Future[Result] = TestApplicationController.create()(request)
 
       status(createdResult) shouldBe Status.CREATED

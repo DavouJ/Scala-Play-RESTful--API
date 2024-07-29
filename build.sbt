@@ -19,5 +19,5 @@ libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play"      % "5.1.0"          % Test,
 
 )
-
+libraryDependencies += ws
 libraryDependencies += "org.jsoup" % "jsoup" % "1.11.2"

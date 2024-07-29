@@ -6,13 +6,15 @@ import org.mongodb.scala.result
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Request, Result}
 import repositories.DataRepository
+import services.LibraryService
 
 import scala.concurrent.{ExecutionContext, Future}
 import javax.inject.Inject
+import scala.reflect.runtime.universe.Throw
 
 
 @Singleton
-class ApplicationController @Inject()(dataRepository: DataRepository)(val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController {
+class ApplicationController @Inject()(dataRepository: DataRepository)(val controllerComponents: ControllerComponents)(libraryService: LibraryService)(implicit ec: ExecutionContext) extends BaseController {
 
   //  def index(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
   //    Future.successful(Ok(views.html.index()))
@@ -51,6 +53,15 @@ class ApplicationController @Inject()(dataRepository: DataRepository)(val contro
       item => Accepted
     }
   }
+  }
+
+  def getGoogleBook(term: String): Action[AnyContent] = Action.async { implicit request =>
+    libraryService.getGoogleBook( term = term).map {
+      case x => Ok {
+        Json.toJson(x)
+      }
+      case _ => Status(404)(Json.toJson("Unable to find any books"))
+    }
   }
 
 }
