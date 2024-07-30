@@ -25,9 +25,9 @@ class LibraryServiceSpec extends BaseSpec with MockFactory with ScalaFutures wit
 
   val gameOfThrones: JsValue = Json.obj(
     "id" -> "someId",
-    "volumeInfo" -> ("title" -> "A Game of Thrones",
+    "title" -> "A Game of Thrones",
       "description" -> "The best book!!!",
-      "pageCount" -> 100)
+      "pageCount" -> 100
   )
 
   "getGoogleBook" should {

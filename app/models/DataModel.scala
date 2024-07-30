@@ -1,35 +1,27 @@
 package models
 
-import play.api.libs.json.{JsObject, Json, OFormat}
+import play.api.libs.json.{JsObject, JsValue, Json, OFormat, OWrites}
 
-case class ResponseItem(id: String, volumeInfo: JsObject)  {
-
+case class DataModel(id: String, volumeInfo: VolumeInfo) {
+  val combined = Combined(id, volumeInfo.title, volumeInfo.description, volumeInfo.pageCount)
 }
 
-case class VolumeInfo(title: String, description: Option[String], pageCount: Int)  {
+case class VolumeInfo(  title: String, description: Option[String], pageCount: Int)
 
-}
-
-case class DataModel(id: String, volumeInfo: JsObject ){
-
-}
+case class Combined(id: String, title: String, description: Option[String], pageCount: Int)
 
 
-object DataModel{
-
+object DataModel {
   implicit val formats: OFormat[DataModel] = Json.format[DataModel]
 }
 
+object Combined {
+  implicit val formats: OFormat[Combined] = Json.format[Combined]
+}
 
-
-object VolumeInfo{
+object VolumeInfo {
   implicit val formats: OFormat[VolumeInfo] = Json.format[VolumeInfo]
 
 }
 
-object ResponseItem{
 
-  implicit val formats: OFormat[ResponseItem] = Json.format[ResponseItem]
-
-
-}

@@ -56,12 +56,13 @@ class ApplicationController @Inject()(dataRepository: DataRepository)(val contro
   }
 
   def getGoogleBook(term: String): Action[AnyContent] = Action.async { implicit request =>
-    libraryService.getGoogleBook( term = term).map {
+    libraryService.getGoogleBook(term = term).map {
       case x => Ok {
-        Json.toJson(x)
+        Json.toJson( x.combined )
       }
       case _ => Status(404)(Json.toJson("Unable to find any books"))
     }
+
   }
 
 }

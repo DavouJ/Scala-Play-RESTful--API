@@ -1,7 +1,7 @@
 package services
 
 import connectors.LibraryConnector
-import models.{DataModel, ResponseItem, VolumeInfo}
+import models.{DataModel}
 
 import java.awt.print.Book
 import javax.inject.Inject
