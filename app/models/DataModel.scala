@@ -2,6 +2,7 @@ package models
 
 import play.api.libs.json.{JsObject, JsValue, Json, OFormat, OWrites}
 
+
 case class DataModel(id: String, volumeInfo: VolumeInfo) {
   val combined = Combined(id, volumeInfo.title, volumeInfo.description, volumeInfo.pageCount)
 }

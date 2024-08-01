@@ -1,6 +1,6 @@
 package repositories
 
-import models.DataModel
+import models.{APIError, DataModel}
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.empty
 import org.mongodb.scala.model._
@@ -28,10 +28,10 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
   indexes = Seq(IndexModel(Indexes.ascending("_id"))),
   replaceIndexes = false
 ) {
-  def index(): Future[Either[Int, Seq[DataModel]]] =    //list of all the dataModels in the database
+  def index(): Future[Either[APIError.BadAPIResponse, Seq[DataModel]]] =    //list of all the dataModels in the database
     collection.find().toFuture().map {
       case books: Seq[DataModel] => Right(books)
-      case _ => Left(NOT_FOUND)
+      case _ => Left(APIError.BadAPIResponse(NOT_FOUND, "Books can't be found"))
     }
 
   def create(book: DataModel): Future[DataModel] =
@@ -60,12 +60,6 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
       filter = byID(id)
     ).toFuture()
 
-  //  def delete(id: String): Future[Either[Int,result.DeleteResult]] =
-//    collection.deleteOne(filter = byID(id)).headOption flatMap {
-//      case Some(data) => Future(Right(data))
-//      case _ => Future(Left(NOT_FOUND))
-//    }
-//  //.toFuture()
 
   def deleteAll(): Future[Unit] = collection.deleteMany(empty()).toFuture().map(_ => ())
 

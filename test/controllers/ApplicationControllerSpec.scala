@@ -31,10 +31,7 @@ class ApplicationControllerSpec @Inject()(dataRepository: DataRepository)(val co
     "abcd",
     volumeInfo
   )
-  private val badDataModel: DataModel = DataModel(
-    "abcd",
-    volumeInfo
-  )
+
 
   "ApplicationController.index()" should {
     beforeEach()
@@ -68,7 +65,7 @@ class ApplicationControllerSpec @Inject()(dataRepository: DataRepository)(val co
 
       status(createdResult) shouldBe Status.CREATED
 
-      val readResult: Future[Result] = TestApplicationController.read("abcd")(FakeRequest())
+      val readResult: Accumulator[ByteString, Result]  = TestApplicationController.read("abcd")(FakeRequest())
 
       status(readResult) shouldBe Status.OK
 
@@ -108,7 +105,7 @@ class ApplicationControllerSpec @Inject()(dataRepository: DataRepository)(val co
 
       status(createdResult) shouldBe Status.CREATED
 
-      val deleteResult: Future[Result] = TestApplicationController.delete("abcd")(FakeRequest())
+      val deleteResult: Accumulator[ByteString, Result]  = TestApplicationController.delete("abcd")(FakeRequest())
 
       val actualJson = contentAsJson(deleteResult)
       actualJson shouldBe JsSuccess(Accepted)

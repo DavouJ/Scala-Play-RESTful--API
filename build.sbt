@@ -21,3 +21,4 @@ libraryDependencies ++= Seq(
 )
 libraryDependencies += ws
 libraryDependencies += "org.jsoup" % "jsoup" % "1.11.2"
+libraryDependencies += ("org.typelevel"                %% "cats-core"                 % "2.3.0")

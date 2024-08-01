@@ -22,14 +22,21 @@ class ApplicationController @Inject()(dataRepository: DataRepository)(val contro
 
   def index() = Action.async { implicit request =>
     dataRepository.index().map {
-      case Right(item: Seq[DataModel]) => Ok {Json.toJson(item)}
-      case Left(error) => Status(error)(Json.toJson("Unable to find any books"))
+      case Right(item: Seq[DataModel]) => Ok {
+        Json.toJson(item)
+      }
+      case Left(error) => Status(404)(Json.toJson("Unable to find any books"))
     }
   }
 
-  def read(id: String): Action[AnyContent] = Action.async { implicit request => {
-    dataRepository.read(id: String).map {
-      item => Ok {Json.toJson(item)}
+  def read(id: String) = Action.async(parse.json) { implicit request => {
+    request.body.validate[DataModel] match {
+      case JsSuccess(dataModel, _) => dataRepository.read(id: String).map { item =>
+        Ok {
+          Json.toJson(item)
+        }
+      }
+      case JsError(_) => Future(BadRequest)
     }
   }
   }
@@ -43,24 +50,27 @@ class ApplicationController @Inject()(dataRepository: DataRepository)(val contro
 
   def update(id: String) = Action.async(parse.json) { implicit request =>
     request.body.validate[DataModel] match {
-      case JsSuccess(dataModel, _) => dataRepository.update(id, dataModel).map(_ => Accepted {Json.toJson(dataModel)})
+      case JsSuccess(dataModel, _) => dataRepository.update(id, dataModel).map(_ => Accepted {
+        Json.toJson(dataModel)
+      })
       case JsError(_) => Future(BadRequest)
     }
   }
 
-  def delete(id: String): Action[AnyContent] = Action.async { implicit request => {
-    dataRepository.delete(id: String).map{
-      item => Accepted
+  def delete(id: String) = Action.async(parse.json) { implicit request => {
+    request.body.validate[DataModel] match {
+      case JsSuccess(dataModel, _) => dataRepository.delete(id: String).map { dataModel => Accepted }
+      case JsError(_) => Future(BadRequest)
     }
   }
   }
 
   def getGoogleBook(term: String): Action[AnyContent] = Action.async { implicit request =>
-    libraryService.getGoogleBook(term = term).map {
-      case x => Ok {
-        Json.toJson( x.combined )
+    libraryService.getGoogleBook(term = term).value.map {
+      case Right(book) => Ok {
+        Json.toJson(book.combined)
       }
-      case _ => Status(404)(Json.toJson("Unable to find any books"))
+      case Left(error) => Status(404)(Json.toJson("Unable to find any books"))
     }
 
   }
