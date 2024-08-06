@@ -6,9 +6,11 @@ PUT     /api/update/:id     controllers.ApplicationController.update(id: String)
 
 DELETE     /api/delete/:id     controllers.ApplicationController.delete(id: String)
 
-GET     /api/read/:id   controllers.ApplicationController.read(id: String)
+GET     /api/readById/:id   controllers.ApplicationController.readById(id: String)
 
-GET     /library/google/:term      controllers.ApplicationController.getGoogleBook( term: String)
+GET     /api/readByName/:name   controllers.ApplicationController.readByName(name: String)
+
+GET     /library/google/:term      controllers.ApplicationController.getGoogleBook(term: String)
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index()

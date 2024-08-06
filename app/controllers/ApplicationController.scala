@@ -29,14 +29,23 @@ class ApplicationController @Inject()(dataRepository: DataRepository)(val contro
     }
   }
 
-  def read(id: String) = Action.async(parse.json) { implicit request => {
-    request.body.validate[DataModel] match {
-      case JsSuccess(dataModel, _) => dataRepository.read(id: String).map { item =>
-        Ok {
-          Json.toJson(item)
-        }
+  def readById(id: String) = Action.async { implicit request => {
+
+    dataRepository.readById(id).map {
+      case item: Option[DataModel] => Ok {
+        Json.toJson(item)
       }
-      case JsError(_) => Future(BadRequest)
+      case null => Status(404)(Json.toJson("Unable to find any books"))
+    }
+  }
+  }
+
+  def readByName(id: String) = Action.async { implicit request => {
+    dataRepository.readByName(id).map {
+      case item: Option[DataModel] => Ok {
+        Json.toJson(item)
+      }
+      case null => Status(404)(Json.toJson("Unable to find any books"))
     }
   }
   }

@@ -5,7 +5,10 @@ import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.empty
 import org.mongodb.scala.model._
 import org.mongodb.scala.result
-import org.mongodb.scala.result.DeleteResult
+import org.mongodb.scala._
+import org.mongodb.scala.model.Filters._
+import org.mongodb.scala.model.Projections._
+import org.mongodb.scala.model.Sorts._
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -17,8 +20,9 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
  * This section creates a new DataRepository class and injects dependencies into it required for every Mongo Repository.
  * All of the return types of these functions are async futures
+ *
  * @param mongoComponent mongo component
- * @param ec execute program logic asynchronously
+ * @param ec             execute program logic asynchronously
  */
 @Singleton
 class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: ExecutionContext) extends PlayMongoRepository[DataModel](
@@ -28,7 +32,7 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
   indexes = Seq(IndexModel(Indexes.ascending("_id"))),
   replaceIndexes = false
 ) {
-  def index(): Future[Either[APIError.BadAPIResponse, Seq[DataModel]]] =    //list of all the dataModels in the database
+  def index(): Future[Either[APIError.BadAPIResponse, Seq[DataModel]]] = //list of all the dataModels in the database
     collection.find().toFuture().map {
       case books: Seq[DataModel] => Right(books)
       case _ => Left(APIError.BadAPIResponse(NOT_FOUND, "Books can't be found"))
@@ -42,12 +46,35 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
       Filters.equal("_id", id)
     )
 
+  private def byName(name: String): Bson =
+    Filters.and(
+      Filters.equal("name", name)
+    )
 
-  def read(id: String): Future[DataModel] =
+//  def readById(id: String): Future[DataModel] = {
+//    collection.find(byID(id)).headOption flatMap {
+//      case Some(data) =>
+//        Future(data)
+//    }
+//  }
+//
+  def readById(id: String): Future[Option[DataModel]]= {
     collection.find(byID(id)).headOption flatMap {
       case Some(data) =>
-        Future(data)
+        Future(Some(data))
+      case _ =>
+        Future(null)
     }
+  }
+
+  def readByName(name: String): Future[Option[DataModel]] = {
+    collection.find(byName(name)).headOption flatMap {
+      case Some(data) =>
+        Future(Some(data))
+      case _ =>
+        Future(null)
+    }
+  }
 
   def update(id: String, book: DataModel): Future[result.UpdateResult] =
     collection.replaceOne(
@@ -62,7 +89,6 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
 
 
   def deleteAll(): Future[Unit] = collection.deleteMany(empty()).toFuture().map(_ => ())
-
 
 
 }

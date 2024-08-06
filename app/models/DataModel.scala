@@ -2,8 +2,11 @@ package models
 
 import play.api.libs.json.{JsObject, JsValue, Json, OFormat, OWrites}
 
+case class DataModel(_id: String, name: String, description: Option[String], pageCount: Int ) {
 
-case class DataModel(id: String, volumeInfo: VolumeInfo) {
+}
+
+case class ApiDataModel(id: String, volumeInfo: VolumeInfo) {
   val combined = Combined(id, volumeInfo.title, volumeInfo.description, volumeInfo.pageCount)
 }
 
@@ -14,6 +17,10 @@ case class Combined(id: String, title: String, description: Option[String], page
 
 object DataModel {
   implicit val formats: OFormat[DataModel] = Json.format[DataModel]
+}
+
+object ApiDataModel {
+  implicit val formats: OFormat[ApiDataModel] = Json.format[ApiDataModel]
 }
 
 object Combined {

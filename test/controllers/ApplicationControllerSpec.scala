@@ -60,7 +60,7 @@ class ApplicationControllerSpec @Inject()(dataRepository: DataRepository)(val co
 
     "Find a book in the database by id" in {
       beforeEach()
-      val request: FakeRequest[JsValue] = buildPost(s"/api/${dataModel.id}").withBody[JsValue](Json.toJson(dataModel))
+      val request: FakeRequest[JsValue] = buildPost(s"/api/${dataModel._id}").withBody[JsValue](Json.toJson(dataModel))
       val createdResult: Future[Result] = TestApplicationController.create()(request)
 
       status(createdResult) shouldBe Status.CREATED
@@ -80,7 +80,7 @@ class ApplicationControllerSpec @Inject()(dataRepository: DataRepository)(val co
   "AplicationController.update(id: String)" should {
     "Update a book's details by id" in {
       beforeEach()
-      val request: FakeRequest[JsValue] = buildPost(s"/api/${dataModel.id}").withBody[JsValue](Json.toJson(dataModel))
+      val request: FakeRequest[JsValue] = buildPost(s"/api/${dataModel._id}").withBody[JsValue](Json.toJson(dataModel))
       val createdResult: Future[Result] = TestApplicationController.create()(request)
 
       status(createdResult) shouldBe Status.CREATED
@@ -100,7 +100,7 @@ class ApplicationControllerSpec @Inject()(dataRepository: DataRepository)(val co
 
     "remove a book from the collection by id" in{
       beforeEach()
-      val request: FakeRequest[JsValue] = buildPost(s"/api/${dataModel.id}").withBody[JsValue](Json.toJson(dataModel))
+      val request: FakeRequest[JsValue] = buildPost(s"/api/${dataModel._id}").withBody[JsValue](Json.toJson(dataModel))
       val createdResult: Future[Result] = TestApplicationController.create()(request)
 
       status(createdResult) shouldBe Status.CREATED
