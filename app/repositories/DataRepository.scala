@@ -60,7 +60,7 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
 
 
   def readById(id: String): Future[Either[DatabaseError.BadAPIResponse, Option[DataModel]]] = {
-    collection.find(byID(id)).headOption flatMap {
+    collection.find(byID(id)).headOption.flatMap {
       case Some(book) =>
         Future(Right(Some(book)))
       case _ =>
@@ -69,7 +69,7 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
   }
 
   def readByName(name: String): Future[Either[DatabaseError.BadAPIResponse, Option[DataModel]]] = {
-    collection.find(byName(name)).headOption flatMap {
+    collection.find(byName(name)).headOption.flatMap {
       case Some(book) =>
         Future(Right(Some(book)))
       case _ =>
@@ -108,7 +108,7 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
         book
       }
     }.recover { case _ =>
-    Left(DatabaseError.BadAPIResponse(500, "Could not delete"))
+    Left(DatabaseError.BadAPIResponse(500, "Could not delete all"))
   }
 
 

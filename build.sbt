@@ -27,8 +27,8 @@ libraryDependencies ++= Seq(
   "uk.gov.hmrc.mongo"      %% "hmrc-mongo-play-28"      % "0.63.0",             guice,
   "org.scalatest"          %% "scalatest"               % "3.2.15"            % Test,
   "org.scalamock"          %% "scalamock"               % "5.2.0"             % Test,
-  "org.scalatestplus.play" %% "scalatestplus-play"      % "5.1.0"             % Test
-
+  "org.scalatestplus.play" %% "scalatestplus-play"      % "5.1.0"             % Test,
+  "org.mockito"            % "mockito-core"             % "5.8.0"             % Test
 )
 
 

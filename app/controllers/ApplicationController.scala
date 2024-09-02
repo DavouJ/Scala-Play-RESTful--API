@@ -16,10 +16,9 @@ import scala.reflect.runtime.universe.Throw
 
 @Singleton
 class ApplicationController @Inject()(
-                                      val controllerComponents: ControllerComponents,
-                                      libraryService: LibraryService,
-                                      repositoryService: RepositoryService
-                                     )(implicit ec: ExecutionContext) extends BaseController {
+                                       repositoryService: RepositoryService,
+                                       libraryService: LibraryService,
+                                     )(implicit ec: ExecutionContext, val controllerComponents: ControllerComponents) extends BaseController {
 
 
   def index() = Action.async { implicit request =>
