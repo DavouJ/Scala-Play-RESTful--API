@@ -14,7 +14,8 @@ import scala.reflect.runtime.universe.Throw
 
 
 @Singleton
-class ApplicationController @Inject()(dataRepository: DataRepository)(val controllerComponents: ControllerComponents)(libraryService: LibraryService)(implicit ec: ExecutionContext) extends BaseController {
+class ApplicationController @Inject()(dataRepository: DataRepository, libraryService: LibraryService)
+                                     (implicit ec: ExecutionContext, val controllerComponents: ControllerComponents) extends BaseController {
 
   //  def index(): Action[AnyContent] = Action.async { implicit request: Request[AnyContent] =>
   //    Future.successful(Ok(views.html.index()))
