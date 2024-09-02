@@ -11,19 +11,20 @@
         <div class="container-fluid py-5 ">
             <h1 class="display-5 fw-bold text-center">Search results for: @search</h1>
             <div class="row justify-content-center">
+                @books.items.take(9).map { book =>
                 <div class="card p-4" style="width: 18rem; ">
-                    <img src="@(books.items(2).volumeInfo.imageLinks match{
+                    <img src="@(book.volumeInfo.imageLinks match{
                         case Some(n) => n.thumbnail
                         case None => 0})"
                          class="card-img-top" alt="...">
                     <div class="card-body">
 
-                        <h5 class="card-title">@(books.items(2).volumeInfo.title match{
+                        <h5 class="card-title">@(book.volumeInfo.title match{
                             case Some(n) => n
                             case None => 0}).</h5>
                     </div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Page Count: @(books.items(2).volumeInfo.pageCount match{
+                        <li class="list-group-item">Page Count: @(book.volumeInfo.pageCount match{
                         case Some(n) => n
                         case None => 0})</li>
                     </ul>
@@ -31,7 +32,7 @@
                         <button type="button" class="btn btn-outline-info">Learn More</button>
                     </div>
                 </div>
-
+                }
             </div>
         </div>
     </div>

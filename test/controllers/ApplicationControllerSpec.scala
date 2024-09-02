@@ -56,6 +56,7 @@ class ApplicationControllerSpec  extends BaseSpecWithApplication {
       val indexResult  = TestApplicationController.index()(request2)
 
       status(indexResult) shouldBe Status.OK
+      //should put a test to asset expected json body returned
       afterEach()
     }
 

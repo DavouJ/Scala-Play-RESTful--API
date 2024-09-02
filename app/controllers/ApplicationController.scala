@@ -119,11 +119,8 @@ class ApplicationController @Inject()(
 
     libraryService.getGoogleBook(term = search).value.map {
       case Right(books) =>
-      println(books)
-        Ok {
-          Json.toJson(books)
-        }
-        //Ok(views.html.results(search, books))
+
+        Ok(views.html.results(search, books))
       case Left(error: APIError) =>
         Status(error.httpResponseStatus)(Json.toJson(error.reason))
     }
