@@ -1,35 +1,59 @@
 package models
 
-import play.api.libs.json.{JsObject, JsValue, Json, OFormat, OWrites}
+import play.api.data._
+import play.api.data.Forms._
+import play.api.http.Writeable
+import play.api.libs.json.{JsObject, JsValue, Json, OFormat, OWrites, Writes}
 
-case class DataModel(_id: String, name: String, description: Option[String], pageCount: Int ) {
-
-}
-
-case class ApiDataModel(id: String, volumeInfo: VolumeInfo) {
-  val combined = Combined(id, volumeInfo.title, volumeInfo.description, volumeInfo.pageCount)
-}
-
-case class VolumeInfo(  title: String, description: Option[String], pageCount: Int)
-
-case class Combined(id: String, title: String, description: Option[String], pageCount: Int)
-
+case class DataModel(_id: String, name: String, description: String = "", pageCount: Int, thumbnail: String = "")
 
 object DataModel {
   implicit val formats: OFormat[DataModel] = Json.format[DataModel]
+
+//  val dataModelForm: Form[DataModel] = Form(
+//    mapping(
+//      "_id" -> text,
+//      "name" -> text,
+//      "description" -> text,
+//      "pageCount" -> number,
+//      "thumbnail" -> text
+//    )(DataModel.apply)(DataModel.unapply)
+//  )
 }
+
+
+case class ApiDataModel(id: String, volumeInfo: VolumeInfo)
 
 object ApiDataModel {
   implicit val formats: OFormat[ApiDataModel] = Json.format[ApiDataModel]
+
+
 }
 
-object Combined {
-  implicit val formats: OFormat[Combined] = Json.format[Combined]
-}
+case class VolumeInfo(title: Option[String], description: Option[String], pageCount: Option[Int], imageLinks: Option[ImageLinks])
 
 object VolumeInfo {
   implicit val formats: OFormat[VolumeInfo] = Json.format[VolumeInfo]
-
 }
+
+case class ImageLinks(thumbnail: String)
+
+object ImageLinks {
+  implicit val formats: OFormat[ImageLinks] = Json.format[ImageLinks]
+}
+
+
+case class ResultList(items: Seq[ApiDataModel])
+
+object ResultList {
+  implicit val formats: OFormat[ResultList] = Json.format[ResultList]
+  //implicit val writes: Writeable[ResultList] = Writeable[ResultList]
+}
+
+
+
+
+
+
 
 

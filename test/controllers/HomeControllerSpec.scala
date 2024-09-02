@@ -46,7 +46,7 @@ class HomeControllerSpec extends BaseSpec with Injecting with GuiceOneAppPerSuit
 
       status(home) mustBe OK
       contentType(home) mustBe Some("text/html")
-      Jsoup.parse(contentAsString(home)).title() shouldBe("Play Scala API Demo")
+      Jsoup.parse(contentAsString(home)).title() shouldBe("Welcome to Play")
     }
   }
 }

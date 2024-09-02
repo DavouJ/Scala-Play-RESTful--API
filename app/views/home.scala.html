@@ -1,0 +1,35 @@
+
+@import models.SearchModel
+@import helper._
+
+@()
+
+@main("Find Book"){
+
+<div class="container h-100 d-flex justify-content-center ">
+
+    <div class="p-5 mb-4 bg-secondary-subtle rounded-3 ">
+        <div class="container-fluid py-5 ">
+            <h1 class="display-5 fw-bold text-center">Google Book Database</h1>
+            <div class="row justify-content-center">
+                <p class="col-md-8 fs-4 p-4 text-center ">Search for a book and save it to your bookmarks</p>
+            </div>
+
+            <form class="d-flex" method="get" action = "search" role="search">
+                <input class="form-control me-2"  type="text" name="search" placeholder="Search" aria-label="Search" >
+                <button class="btn bg-secondary"  type="submit" >Search</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+}
+
+
+
+
+
+
+
+
+

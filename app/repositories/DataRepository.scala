@@ -1,11 +1,12 @@
 package repositories
 
-import models.{APIError, DataModel}
+import models.{APIError, DataModel, DatabaseError}
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.empty
 import org.mongodb.scala.model._
 import org.mongodb.scala.result
 import org.mongodb.scala._
+import org.mongodb.scala.bson.BsonObjectId
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Projections._
 import org.mongodb.scala.model.Sorts._
@@ -32,14 +33,20 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
   indexes = Seq(IndexModel(Indexes.ascending("_id"))),
   replaceIndexes = false
 ) {
-  def index(): Future[Either[APIError.BadAPIResponse, Seq[DataModel]]] = //list of all the dataModels in the database
+  def index(): Future[Either[DatabaseError.BadAPIResponse, Seq[DataModel]]] = //list of all the dataModels in the database
     collection.find().toFuture().map {
-      case books: Seq[DataModel] => Right(books)
-      case _ => Left(APIError.BadAPIResponse(NOT_FOUND, "Books can't be found"))
+      books: Seq[DataModel] => Right(books)
+    }.recover { case _ =>
+      Left(DatabaseError.BadAPIResponse(NOT_FOUND, "Books can't be found"))
     }
 
-  def create(book: DataModel): Future[DataModel] =
-    collection.insertOne(book).toFuture().map(_ => book)
+
+  def create(book: DataModel): Future[Either[DatabaseError.BadAPIResponse, DataModel]] =
+    collection.insertOne(book).toFuture().map {
+      _ => Right(book)
+    }.recover { case _ =>
+      Left(DatabaseError.BadAPIResponse(500, "Could not create"))
+    }
 
   private def byID(id: String): Bson =
     Filters.and(
@@ -51,44 +58,58 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
       Filters.equal("name", name)
     )
 
-//  def readById(id: String): Future[DataModel] = {
-//    collection.find(byID(id)).headOption flatMap {
-//      case Some(data) =>
-//        Future(data)
-//    }
-//  }
-//
-  def readById(id: String): Future[Option[DataModel]]= {
+
+  def readById(id: String): Future[Either[DatabaseError.BadAPIResponse, Option[DataModel]]] = {
     collection.find(byID(id)).headOption flatMap {
-      case Some(data) =>
-        Future(Some(data))
+      case Some(book) =>
+        Future(Right(Some(book)))
       case _ =>
-        Future(null)
+        Future(Left(DatabaseError.BadAPIResponse(500, "Could not find Book")))
     }
   }
 
-  def readByName(name: String): Future[Option[DataModel]] = {
+  def readByName(name: String): Future[Either[DatabaseError.BadAPIResponse, Option[DataModel]]] = {
     collection.find(byName(name)).headOption flatMap {
-      case Some(data) =>
-        Future(Some(data))
+      case Some(book) =>
+        Future(Right(Some(book)))
       case _ =>
-        Future(null)
+        Future(Left(DatabaseError.BadAPIResponse(500, "Could not find Book")))
     }
   }
 
-  def update(id: String, book: DataModel): Future[result.UpdateResult] =
-    collection.replaceOne(
-      filter = byID(id),
-      replacement = book,
-      options = new ReplaceOptions().upsert(true)).toFuture() /// LOOK into
 
-  def delete(id: String): Future[result.DeleteResult] =
+  def update(id: String, entry: Map[String, String]): Future[Either[DatabaseError.BadAPIResponse, result.UpdateResult]] = {
+    val updateDocument = Document("$set" -> Document(entry))
+
+    collection.updateOne(Filters.equal("_id", id), updateDocument)
+      .toFuture().map {
+        book => Right(book)
+      }.recover { case _ =>
+        Left(DatabaseError.BadAPIResponse(500, "Could not update"))
+      }
+  }
+
+  def delete(id: String): Future[Either[DatabaseError.BadAPIResponse, result.DeleteResult]] =
     collection.deleteOne(
       filter = byID(id)
-    ).toFuture()
+    ).toFuture().map {
+      book => Right {
+        book
+      }
+    }.recover { case _ =>
+      Left(DatabaseError.BadAPIResponse(500, "Could not delete"))
+    }
 
 
-  def deleteAll(): Future[Unit] = collection.deleteMany(empty()).toFuture().map(_ => ())
+  def deleteAll(): Future[Either[DatabaseError.BadAPIResponse, result.DeleteResult]] =
+    collection.deleteMany(
+      empty()).toFuture().map{
+      book => Right {
+        book
+      }
+    }.recover { case _ =>
+    Left(DatabaseError.BadAPIResponse(500, "Could not delete"))
+  }
 
 
 }

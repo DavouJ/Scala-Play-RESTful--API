@@ -1,21 +1,24 @@
-GET     /api     controllers.ApplicationController.index()
+GET     /api                        controllers.ApplicationController.index()
 
-POST     /api/create    controllers.ApplicationController.create()
+POST     /api/create                controllers.ApplicationController.create()
 
-PUT     /api/update/:id     controllers.ApplicationController.update(id: String)
+PATCH     /api/update/:id           controllers.ApplicationController.update(id: String)
 
-DELETE     /api/delete/:id     controllers.ApplicationController.delete(id: String)
+DELETE     /api/delete/:id          controllers.ApplicationController.delete(id: String)
 
-GET     /api/readById/:id   controllers.ApplicationController.readById(id: String)
+GET     /api/readById/:id           controllers.ApplicationController.readById(id: String)
 
-GET     /api/readByName/:name   controllers.ApplicationController.readByName(name: String)
+GET     /api/readByName/:name       controllers.ApplicationController.readByName(name: String)
 
-GET     /library/google/:term      controllers.ApplicationController.getGoogleBook(term: String)
+GET     /library/google/:term       controllers.ApplicationController.getGoogleBook(term: String)
+
+GET     /home                       controllers.ApplicationController.home()
+
+GET     /search                     controllers.ApplicationController.search(search: String)
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
-
 
