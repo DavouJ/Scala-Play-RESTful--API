@@ -25,12 +25,12 @@ class RepositoryService @Inject()(dataRepository: DataRepository){
     dataRepository.create(dataModel)
   }
 
-  def update(id: String, entry: UpdateModel): Future[Either[DatabaseError.BadAPIResponse, UpdateResult]] = {
+  def update(id: String, entry: UpdateModel): Future[Either[DatabaseError.BadAPIResponse, Boolean]] = {
 
     dataRepository.update(id, Map(entry.title -> entry.entry))
   }
 
-  def delete(id:String): Future[Either[DatabaseError.BadAPIResponse, DeleteResult]] = {
+  def delete(id:String): Future[Either[DatabaseError.BadAPIResponse, Boolean]] = {
     dataRepository.delete(id)
   }
 

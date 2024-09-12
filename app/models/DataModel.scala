@@ -21,13 +21,10 @@ object DataModel {
 //  )
 }
 
-
 case class ApiDataModel(id: String, volumeInfo: VolumeInfo)
 
 object ApiDataModel {
   implicit val formats: OFormat[ApiDataModel] = Json.format[ApiDataModel]
-
-
 }
 
 case class VolumeInfo(title: Option[String], description: Option[String], pageCount: Option[Int], imageLinks: Option[ImageLinks])
@@ -44,7 +41,7 @@ object ImageLinks {
 
 
 case class ResultList(items: Seq[ApiDataModel])
-
+//getorelse for no image
 object ResultList {
   implicit val formats: OFormat[ResultList] = Json.format[ResultList]
   //implicit val writes: Writeable[ResultList] = Writeable[ResultList]

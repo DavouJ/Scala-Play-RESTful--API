@@ -10,6 +10,7 @@ import org.mongodb.scala.bson.BsonObjectId
 import org.mongodb.scala.model.Filters._
 import org.mongodb.scala.model.Projections._
 import org.mongodb.scala.model.Sorts._
+import org.mongodb.scala.result.DeleteResult
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -78,27 +79,35 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
   }
 
 
-  def update(id: String, entry: Map[String, String]): Future[Either[DatabaseError.BadAPIResponse, result.UpdateResult]] = {
+  def update(id: String, entry: Map[String, String]): Future[Either[DatabaseError.BadAPIResponse, Boolean]] = {
     val updateDocument = Document("$set" -> Document(entry))
 
     collection.updateOne(Filters.equal("_id", id), updateDocument)
       .toFuture().map {
-        book => Right(book)
+        book => Right(book.wasAcknowledged())
       }.recover { case _ =>
         Left(DatabaseError.BadAPIResponse(500, "Could not update"))
       }
   }
 
-  def delete(id: String): Future[Either[DatabaseError.BadAPIResponse, result.DeleteResult]] =
+  def delete(id: String): Future[Either[DatabaseError.BadAPIResponse, Boolean]] =
     collection.deleteOne(
       filter = byID(id)
-    ).toFuture().map {
-      book => Right {
-        book
-      }
-    }.recover { case _ =>
-      Left(DatabaseError.BadAPIResponse(500, "Could not delete"))
+    ).toFuture().map { x : DeleteResult =>
+      x.wasAcknowledged() match{
+      case true =>
+        Right(true)
+      case _ =>
+        Left(DatabaseError.BadAPIResponse(500, "Could not delete"))
     }
+    }
+
+//      book => Right {
+//        book.wasAcknowledged()
+//      }
+//    }.recover { case _ =>
+//      Left(DatabaseError.BadAPIResponse(500, "Could not delete"))
+//    }
 
 
   def deleteAll(): Future[Either[DatabaseError.BadAPIResponse, result.DeleteResult]] =

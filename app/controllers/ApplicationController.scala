@@ -65,7 +65,7 @@ class ApplicationController @Inject()(
 
     request.body.validate[UpdateModel] match {
       case JsSuccess(updateModel, _) => repositoryService.update(id,updateModel).map{
-        case Right(item: result.UpdateResult) => Accepted {
+        case Right(true) => Accepted {
           Json.toJson(s"updated")
         }
         case Left(error: DatabaseError) => Status(error.ResponseStatus)(Json.toJson(error.reason))
@@ -76,7 +76,8 @@ class ApplicationController @Inject()(
 
   def delete(id: String) = Action.async { implicit request => {
 
-    repositoryService.delete(id).map { case Right(item) => Accepted {
+    repositoryService.delete(id).map {
+      case Right(true) => Accepted {
       Json.toJson(s"Deleted")
     }
     case Left(error: DatabaseError) => Status(error.ResponseStatus)(Json.toJson(error.reason))
