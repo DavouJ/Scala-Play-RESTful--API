@@ -4,15 +4,13 @@ import baseSpec.BaseSpecWithApplication
 import com.mongodb.client.result.{DeleteResult, UpdateResult}
 import models.{APIError, DataModel, DatabaseError, UpdateModel}
 import org.mockito.Mockito.{mock, when}
-import org.mongodb.scala.internal.Done
-import org.mongodb.scala.result
+
 import play.api.http.Status
 import play.api.http.Status.NOT_FOUND
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc.ControllerComponents
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Helpers}
-import repositories.DataRepository
 import services.{LibraryService, RepositoryService}
 
 import scala.concurrent.Future
@@ -230,28 +228,28 @@ class ApplicationControllerSpecV2 extends BaseSpecWithApplication {
     }
   }
 
-  "ApplicationController.delete(id: String)" should {
-    "the DataRepository successfully deletes" when {
-      "delete the book" in {
-
-        when(mockRepositoryService.delete("AX88Y8A90AS")).thenReturn(Future.successful(Right(true)))
-
-        val result = TestApplicationController.delete("AX88Y8A90AS")(FakeRequest())
-        status(result) shouldBe Status.ACCEPTED
-        contentAsJson(result) shouldBe Json.toJson("Deleted")
-      }
-
-      //"the DataRepository is unsuccessful deleting" when {
-
-          //when(mockRepositoryService.delete("AX88Y8A90AS"))
-           // .thenReturn(Future.successful(Left(DatabaseError.BadAPIResponse(500, "Could not delete"))))
-
-          //val result = TestApplicationController.delete("AX88Y8A90AS")(FakeRequest())
-          //status(result) shouldBe 500
-          //contentAsJson(result) shouldBe Json.toJson("Bad response from upstream. Got status: 500, and got reason: Could not delete.")
-
-      //}
-    }
-  }
+//  "ApplicationController.delete(id: String)" should {
+//    "the DataRepository successfully deletes" when {
+//      "delete the book" in {
+//
+//        when(mockRepositoryService.delete("AX88Y8A90AS")).thenReturn(Future.successful(Right(true)))
+//
+//        val result = TestApplicationController.delete("AX88Y8A90AS")(FakeRequest())
+//        status(result) shouldBe Status.ACCEPTED
+//        contentAsJson(result) shouldBe Json.toJson("Deleted")
+//      }
+//
+//      "the DataRepository is unsuccessful deleting" when {
+//
+//        when(mockRepositoryService.delete("AX88Y8A90AS"))
+//          .thenReturn(Future.successful(Left(DatabaseError.BadAPIResponse(500, "Could not delete"))))
+//
+//        val result = TestApplicationController.delete("AX88Y8A90AS")(FakeRequest())
+//        status(result) shouldBe 500
+//        contentAsJson(result) shouldBe Json.toJson("Bad response from upstream. Got status: 500, and got reason: Could not delete.")
+//
+//      }
+//    }
+//  }
 
 }

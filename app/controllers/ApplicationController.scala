@@ -93,7 +93,6 @@ class ApplicationController @Inject()(
     }
     case Left(error: DatabaseError) => Status(error.ResponseStatus)(Json.toJson(error.reason))
     }
-
   }
   }
 
