@@ -21,16 +21,16 @@ class ApplicationControllerSpecV2 extends BaseSpecWithApplication {
   val mockLibraryService: LibraryService = mock(classOf[LibraryService])
   val mcc: ControllerComponents = Helpers.stubControllerComponents()
 
-//  override def beforeEach(): Unit = {
-//    super.beforeEach()
-//    when(mockRepositoryService.deleteAll).thenReturn(Future.successful(Right(DeleteResult.acknowledged(1))))
-//    await(mockRepositoryService.deleteAll)
-//  }
-//
-//  override def afterEach(): Unit = {
-//    await(mockRepositoryService.deleteAll)
-//    super.afterEach()
-//  }
+    override def beforeEach(): Unit = {
+      super.beforeEach()
+      when(mockRepositoryService.deleteAll).thenReturn(Future.successful(Right(DeleteResult.acknowledged(1))))
+      await(mockRepositoryService.deleteAll)
+    }
+
+    override def afterEach(): Unit = {
+      await(mockRepositoryService.deleteAll)
+      super.afterEach()
+    }
 
   val TestApplicationController = new ApplicationController(mockRepositoryService, mockLibraryService)(executionContext, mcc)
 
@@ -162,33 +162,6 @@ class ApplicationControllerSpecV2 extends BaseSpecWithApplication {
     }
   }
 
-  //  "ApplicationController.create" should {
-  //    "the DataRepository successfully creates a book" when {
-  //      "create the book" in {
-  //
-  //        val testBook: DataModel = DataModel("AX88Y8A90AS", "Harry Potter", "A book about magic", 560)
-  //
-  //        when(mockRepositoryService.create(testBook)).thenReturn(Future.successful(Right(testBook)))
-  //
-  //        val request: FakeRequest[JsValue] = buildPost("/api/create").withBody[JsValue](Json.toJson(testBook: DataModel))
-  //        val result = TestApplicationController.create()(request)
-  //        status(result) shouldBe Status.CREATED
-  //        contentAsJson(result) shouldBe Json.toJson("Added Harry Potter to database")
-  //      }
-  //
-  //      "the DataRepository is unsuccessful creating a book" when {
-  //        "return an Database error" in {
-  //
-  //          when(mockRepositoryService.index())
-  //            .thenReturn(Future.successful(Left(DatabaseError.BadAPIResponse(500, "Could not create"))))
-  //
-  //          val result = TestApplicationController.create()(FakeRequest())
-  //          status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-  //          contentAsJson(result) shouldBe Json.toJson(Status.INTERNAL_SERVER_ERROR, "Bad response from upstream. Got status: 500, and got reason: Could not create")
-  //        }
-  //      }
-  //    }
-  //  }
 
   "ApplicationController.update(id: String)" should {
     "the DataRepository successfully updates" when {
@@ -239,15 +212,14 @@ class ApplicationControllerSpecV2 extends BaseSpecWithApplication {
         contentAsJson(result) shouldBe Json.toJson("Deleted")
       }
 
-      "the DataRepository is unsuccessful deleting" when {
+      "the DataRepository is unsuccessful in deleting" when {
+        "return a database error" in {
+          when(mockRepositoryService.delete("AX88Y8A90AS")).thenReturn(Future.successful(Left(DatabaseError.BadAPIResponse(500, "Could not delete"))))
 
-//        when(mockRepositoryService.delete("AX88Y8A90AS"))
-//          .thenReturn(Future.successful(Left(DatabaseError.BadAPIResponse(500, "Could not delete"))))
-//
-//        val result = TestApplicationController.delete("AX88Y8A90AS")(FakeRequest())
-//        status(result) shouldBe 500
-//        contentAsJson(result) shouldBe Json.toJson("Bad response from upstream. Got status: 500, and got reason: Could not delete.")
-
+          val result = TestApplicationController.delete("AX88Y8A90AS")(FakeRequest())
+          status(result) shouldBe 500
+          contentAsJson(result) shouldBe Json.toJson("Bad response from upstream. Got status: 500, and got reason: Could not delete.")
+        }
       }
     }
   }
